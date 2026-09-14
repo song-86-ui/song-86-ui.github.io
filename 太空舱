@@ -1,0 +1,3 @@
+打开题目，发现什么也没有。
+按Ctrl＋u查看源代码，发现代码里什么也没有。
+因为页面空白，所以flag可能藏在headers里，按fn+f12打开开发者工具，打开network中找headers，不断按F5刷新页面，逐个点开请求在response headers里找到flag。
