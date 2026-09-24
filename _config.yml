@@ -1,3 +1,2 @@
-title: 我的博客
-description: 
-theme: minima  # 必须要有主题，GitHub Pages 默认支持 minima
+theme: jekyll-theme-minimal
+title: ""
