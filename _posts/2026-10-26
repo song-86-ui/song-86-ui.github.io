@@ -1,0 +1,54 @@
+题目提示密码为“z?????”，猜测密码为zxc开头的6位字符串。
+
+题目还提示密码为“弱密码top1000”，猜测密码top1000里面的弱密码。
+
+ 其实这里已经可以确定是zzzzzz zxcvbn zxc123 zombie四个其中的1个了（从top1000弱密码字典里筛选zxc开头的6位字符串），当然这里主要是想让大家使用burp进行爆破，下面我们讲解burp相关的操作。
+
+
+随意输入密码后，对返回界面进行源代码审计。发现脚本如下
+
+<script>
+
+var r = {code: 'bugku10000'}
+
+if(r.code == 'bugku10000'){
+
+console.log('e');
+
+document.getElementById('d').innerHTML = "Wrong account or password!";
+
+}else{
+
+console.log('0');
+
+window.location.href = 'success.php?code='+r.code;
+
+}
+
+</script>
+
+ 
+
+    通过这一句“window.location.href = 'success.php?code='+r.code;”，可以判断网页将跳转到以code作为参数的success.php页面。其中code的值来自于var r = {code: 'bugku10000'}。
+
+     至此，可以考虑用burp进行爆破。
+
+    因为code是success.php页面的参数，因此在登录页面当使用正确密码时，code的值（r.code）应该与'bugku10000'不同，进而r的值也与{code: 'bugku10000'}不同。
+
+     也就是说，如果我们输入正确的密码，返回页面的r将不是{code: 'bugku10000'}。
+
+    因此可以在burp的intruder爆破模块中，使用{code: 'bugku10000'}对返回包内容进行筛选。找到返回包不含有{code: 'bugku10000'}的，就可能是使用正确的密码。
+
+（这里需要注意：不能以bugku10000作为grep-match的匹配条件，因为r.code == 'bugku10000'这个判断条件，是固定死的，不会变的，即使code: bugku10000变成其他的值，下面的r.code == 'bugku10000'也不会变，burp依然会匹配到bugku10000）
+
+
+Burp设置参数如下：
+
+ 
+
+
+ 
+
+在返回结果中对“code: bugku10000”列进行排序，没有√的，就可能是正确的密码。如下图，可以判断密码为“zxc123”。
+
+使用zxc123登录，得到flag！
