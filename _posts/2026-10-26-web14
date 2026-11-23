@@ -1,0 +1,17 @@
+打开题目提示点击我
+
+图片1.png
+
+点击后url变成了/index.php?file=show.php
+
+图片2.png
+
+可以看出本题为文件包含index可以读取其他php文件
+
+所以我们可以联想到读取index文件，但是直接读取index无法查看，所以就应该考虑用base64方法读取，构造urlfile=php://filter/read=convert.base64-encode/resource=index.php
+
+图片3.png
+
+读取到了index的源代码 然后base64解密得到flag
+
+图片4.png
